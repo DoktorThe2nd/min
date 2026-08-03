@@ -36,6 +36,9 @@ android {
 }
 
 dependencies {
+    implementation("org.msgpack:msgpack-core:0.9.12")
+    implementation("at.yawk.lz4:lz4-java:1.11.1")
+    implementation("com.github.luben:zstd-jni:1.5.6-3")
     implementation("org.luaj:luaj-jse:3.0.1")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

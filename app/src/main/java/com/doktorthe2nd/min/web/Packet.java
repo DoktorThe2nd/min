@@ -1,11 +1,11 @@
 package com.doktorthe2nd.min.web;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Packet {
-    private static final int HEADER_SIZE = 10; // ver(1) + cmd(1) + seq(2) + opcode(2) + packedLen(4) = 10
-    private static final int MAX_COMPRESSED_SIZE = 32*1024*1024; // 32 MB
 
     abstract static class CmdType {
         static final int request = 0;
@@ -27,17 +27,32 @@ public class Packet {
 // [10..]   payload   — данные в MsgPack, опционально сжатые LZ4
 // ```
 
-    private int api = 10; // 10 - default
-    private int cmd = 0;
-    private int seq = 0;
-    private int opcode = 0;
-    private final Map<String, String> payload = new HashMap<>();
+    public int api = 10; // 10 - default
+    public int cmd = 0;
+    public int seq = 0;
+    public int opcode = 0;
+    public Map<String, String> payload = new HashMap<>();
+
+    Packet() {}
+
+    Packet(int _api, int _cmd, int _seq, int _opcode) {
+        this(_api, _cmd, _seq, _opcode, null);
+    }
+
+    Packet(int _api, int _cmd, int _seq, int _opcode, Map<String, String> _payload) {
+        api = _api;
+        cmd = _cmd;
+        seq = _seq;
+        opcode = _opcode;
+        if (_payload != null) payload = _payload;
+    }
 
     public boolean isOk() { return cmd == CmdType.ok; }
     public boolean isError() { return cmd == CmdType.error; }
     public boolean isPush() { return cmd == CmdType.push; }
 
-    public String to_string() {
+    @NonNull
+    public String toString() {
         return "Packet(ver="+api+" cmd="+cmd+" seq="+seq+" opcode="+opcode+" payload="+payload.toString()+")";
     }
 }

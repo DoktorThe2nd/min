@@ -1,7 +1,9 @@
 package com.doktorthe2nd.min;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
@@ -13,12 +15,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.doktorthe2nd.min.luaj.ScriptEngine;
 import com.doktorthe2nd.min.luaj.ScriptInstaller;
+import com.doktorthe2nd.min.web.DefinedPackets;
+import com.doktorthe2nd.min.web.OpcodeTable;
+import com.doktorthe2nd.min.web.SocketCnt;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends Activity {
     private static final int REQ_PICK_SCRIPT = 1001;
@@ -29,6 +37,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Consts.set(getApplicationContext());
+
         setContentView(R.layout.main_activity);
         log = findViewById(R.id.log);
 
@@ -41,10 +52,10 @@ public class MainActivity extends Activity {
 
         Button add = findViewById(R.id.add);
         add.setOnClickListener(v -> {
-            Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            i.setType("*/*");
-            startActivityForResult(i, REQ_PICK_SCRIPT);
+            //Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            //i.addCategory(Intent.CATEGORY_OPENABLE);
+            //i.setType("*/*");
+            //startActivityForResult(i, REQ_PICK_SCRIPT);
         });
     }
 

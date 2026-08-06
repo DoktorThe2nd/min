@@ -31,7 +31,7 @@ public class Packet {
     public int cmd = 0;
     public int seq = 0;
     public int opcode = 0;
-    public Map<String, String> payload = new HashMap<>();
+    public Map<String, Object> payload = new HashMap<>();
 
     Packet() {}
 
@@ -39,7 +39,7 @@ public class Packet {
         this(_api, _cmd, _seq, _opcode, null);
     }
 
-    Packet(int _api, int _cmd, int _seq, int _opcode, Map<String, String> _payload) {
+    Packet(int _api, int _cmd, int _seq, int _opcode, Map<String, Object> _payload) {
         api = _api;
         cmd = _cmd;
         seq = _seq;

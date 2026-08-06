@@ -40,11 +40,13 @@ public class SocketListener {
             try (InputStream in = socket.getInputStream()) {
                 byte[] buffer = new byte[LZ4.MAX_COMPRESSED_SIZE];
                 int bytesRead;
-                while (running.get() && (bytesRead = in.read(buffer)) != -1) {
-                    // Извлекаем только реально прочитанные байты
-                    byte[] data = new byte[bytesRead];
-                    System.arraycopy(buffer, 0, data, 0, bytesRead);
-                    onData.accept(data);
+                while (running.get()) {
+                    while ((bytesRead = in.read(buffer)) != -1) {
+                        // Извлекаем только реально прочитанные байты
+                        byte[] data = new byte[bytesRead];
+                        System.arraycopy(buffer, 0, data, 0, bytesRead);
+                        onData.accept(data);
+                    }
                 }
             } catch (IOException e) {
                 if (running.get()) {
@@ -62,7 +64,7 @@ public class SocketListener {
     public void stop() {
         running.set(false);
         if (readerThread != null) {
-            readerThread.stop(); // на случай, если поток заблокирован на чтении
+            readerThread.interrupt(); // на случай, если поток заблокирован на чтении
         }
     }
 

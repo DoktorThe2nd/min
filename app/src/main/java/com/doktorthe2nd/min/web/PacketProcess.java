@@ -19,7 +19,7 @@ public class PacketProcess {
     private static final int ISOLATE_DECODE_THRESHOLD = 4096;
     private static final int HEADER_SIZE = 10;
 
-    public static String messageFromErrorPayload(Map<String, String> payload) {
+    public static String messageFromErrorPayload(Map<String, Object> payload) {
         if (payload == null) return "Unknown error (payload null)";
         var msg = payload.get("message");
         if (msg != null && (msg.equals("FAIL_WRONG_PASSWORD") || msg.equals("FAIL_LOGIN_TOKEN"))) {
@@ -27,13 +27,13 @@ public class PacketProcess {
         }
         for (var key : Set.of("localizedMessage", "message", "title")) {
             var out = payload.get(key);
-            if (out != null) return out;
+            if (out != null) return out.toString();
         }
 
         return "Unknown error";
     }
 
-    public static boolean isSessionExpiredPayload(Map<String, String> payload) {
+    public static boolean isSessionExpiredPayload(Map<String, Object> payload) {
         return payload != null &&
         (Objects.equals(payload.get("message"), "FAIL_WRONG_PASSWORD") ||
                 Objects.equals(payload.get("message"), "FAIL_LOGIN_TOKEN"));
@@ -56,35 +56,11 @@ public class PacketProcess {
                 text.contains("сессия не онлайн");
     }
 
-    public static byte[] serializeMap(Map<String, String> map) throws IOException {
-        try (MessageBufferPacker packer = MessagePack.newDefaultBufferPacker()) {
-            packer.packMapHeader(map.size());
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                packer.packString(entry.getKey());
-                packer.packString(entry.getValue());
-            }
-            return packer.toByteArray();
-        }
-    }
-
-    public static Map<String, String> deserializeMap(byte[] raw) throws IOException {
-        try (MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(raw)) {
-            int size = unpacker.unpackMapHeader();
-            Map<String, String> result = new HashMap<>(size);
-            for (int i = 0; i < size; i++) {
-                String key = unpacker.unpackString();
-                String value = unpacker.unpackString();
-                result.put(key, value);
-            }
-            return result;
-        }
-    }
-
-    public static byte[] packPacket(int opcode, Map<String, String> payload) throws IOException {
+    public static byte[] packPacket(int opcode, Map<String, Object> payload) throws IOException {
         return packPacket(opcode, payload, 0);
     }
-    public static byte[] packPacket(int opcode, Map<String, String> payload, int seq) throws IOException {
-        byte[] raw = serializeMap(payload);
+    public static byte[] packPacket(int opcode, Map<String, Object> payload, int seq) throws IOException {
+        byte[] raw = MessagePackSerializer.serializeMap(payload);
         byte[] body;
         int flag;
         if (raw.length < COMPRESSION_THRESHOLD) {
@@ -125,13 +101,12 @@ public class PacketProcess {
             return new Packet(api, cmd, seq, opcode);
         }
 
-        int end = HEADER_SIZE + payloadLength;
-        if (end > packet.length) {
+        if (HEADER_SIZE + payloadLength > packet.length) {
             throw new PacketException("Packet payload length "+payloadLength+" exceeds buffer");
         }
-        ByteBuffer slice = ByteBuffer.wrap(packet, HEADER_SIZE, end);
+        ByteBuffer slice = ByteBuffer.wrap(packet, HEADER_SIZE, payloadLength);
 
-        Map<String, String> payload;
+        Map<String, Object> payload;
         if (true || compFlag == 0 && payloadLength < ISOLATE_DECODE_THRESHOLD) {
             payload = deserializePayload(slice.array(), compFlag);
         } else {
@@ -142,16 +117,16 @@ public class PacketProcess {
         return new Packet(api, cmd, seq, opcode, payload);
     }
 
-    public static Map<String, String> deserializePayload(byte[] payloadBytes, int compFlag) {
+    public static Map<String, Object> deserializePayload(byte[] payloadBytes, int compFlag) {
         byte[] bytes = new byte[payloadBytes.length];
         if (compFlag != 0) {
             bytes = decompressPayload(bytes);
         }
         if (bytes.length == 0) return null;
         try {
-            return deserializeMap(bytes);
+            return MessagePackSerializer.deserializeMap(bytes);
         } catch (Exception e) {
-            throw new RuntimeException("MsgPack deserialization error: "+e.getMessage());
+            throw new PacketException("MsgPack deserialization error: "+e.getMessage());
         }
     }
 

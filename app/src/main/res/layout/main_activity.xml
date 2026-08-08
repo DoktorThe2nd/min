@@ -8,24 +8,46 @@
         android:id="@+id/run"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Run all scripts" />
+        android:text="connect" />
 
     <Button
         android:id="@+id/add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Import .lua" />
+        android:text="init session" />
 
-    <ScrollView
+    <Button
+        android:id="@+id/request_auth"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:text="request auth" />
 
-        <TextView
-            android:id="@+id/log"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:textSize="12sp" />
-    </ScrollView>
+    <EditText
+        android:id="@+id/inputcode"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:ems="10"
+        android:inputType="number"
+        android:text="code" />
+
+    <Button
+        android:id="@+id/sendCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="send code" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="password" />
+
+    <Button
+        android:id="@+id/sendPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send password" />
+
 </LinearLayout>

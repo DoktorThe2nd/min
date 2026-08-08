@@ -45,6 +45,9 @@ public class MessagePackSerializer {
             packer.packFloat((Float) value);
         } else if (value instanceof Double) {
             packer.packDouble((Double) value);
+        } else if (value instanceof byte[]) {
+            packer.packBinaryHeader(((byte[])value).length);
+            packer.writePayload((byte[])value);
         } else if (value instanceof Map) {
             // Вложенный словарь – рекурсивный вызов
             @SuppressWarnings("unchecked")
@@ -104,6 +107,11 @@ public class MessagePackSerializer {
                     list.add(unpackValue(unpacker));
                 }
                 return list;
+            case BINARY:
+                int b_size = unpacker.unpackBinaryHeader();
+                byte[] array = new byte[b_size];
+                unpacker.readPayload(array);
+                return array;
             case MAP:
                 return unpackMap(unpacker);
             default:

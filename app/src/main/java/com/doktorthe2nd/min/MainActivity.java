@@ -3,59 +3,62 @@ package com.doktorthe2nd.min;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.EditText;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-
-import com.doktorthe2nd.min.luaj.ScriptEngine;
 import com.doktorthe2nd.min.luaj.ScriptInstaller;
-import com.doktorthe2nd.min.web.DefinedPackets;
-import com.doktorthe2nd.min.web.OpcodeTable;
-import com.doktorthe2nd.min.web.SocketCnt;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.doktorthe2nd.min.modules.session.MSession;
+import com.doktorthe2nd.min.web.Connection;
 
 public class MainActivity extends Activity {
     private static final int REQ_PICK_SCRIPT = 1001;
     private ScriptInstaller installer;
-    private TextView log;
-    private ActivityResultLauncher<Intent> picker;
+
+    @FunctionalInterface
+    public interface RunOnUi {
+        void run(Runnable runnable);
+    }
+
+    public static Context appContext;
+    public static RunOnUi runOnUi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Consts.set(getApplicationContext());
-
         setContentView(R.layout.main_activity);
-        log = findViewById(R.id.log);
 
-        installer = new ScriptInstaller(this);
-        int added = installer.install();
-        log.append("Installed: " + added + " script(s)\n");
+        appContext = getApplicationContext();
+        runOnUi = this::runOnUiThread;
 
         Button run = findViewById(R.id.run);
-        run.setOnClickListener(v -> runAll());
+        run.setOnClickListener(v -> {
+            Connection.start();
+        });
 
         Button add = findViewById(R.id.add);
         add.setOnClickListener(v -> {
-            //Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            //i.addCategory(Intent.CATEGORY_OPENABLE);
-            //i.setType("*/*");
-            //startActivityForResult(i, REQ_PICK_SCRIPT);
+            MSession.init();
+        });
+
+        Button req = findViewById(R.id.request_auth);
+        req.setOnClickListener(v -> {
+            MSession.authRequest("+79595658086");
+        });
+
+        EditText codeinput = findViewById(R.id.inputcode);
+
+        Button sendCode = findViewById(R.id.sendCode);
+        sendCode.setOnClickListener(v -> {
+            MSession.authSendCode(codeinput.getText().toString());
+        });
+
+        EditText passwordInput = findViewById(R.id.password);
+
+        Button sendPassword = findViewById(R.id.sendPassword);
+        sendPassword.setOnClickListener(v -> {
+            MSession.authSendPassword(passwordInput.getText().toString());
         });
     }
 
@@ -64,50 +67,5 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != REQ_PICK_SCRIPT) return;
         if (resultCode != RESULT_OK || data == null || data.getData() == null) return;
-
-        importScript(data.getData());
-    }
-
-    private void importScript(Uri uri) {
-        try {
-            String name = queryName(uri);
-            if (!name.toLowerCase().endsWith(".lua")) name = name + ".lua";
-            File out = new File(installer.getDir(), name);
-
-            try (InputStream in = getContentResolver().openInputStream(uri);
-                 FileOutputStream os = new FileOutputStream(out)) {
-                if (in != null) {
-                    byte[] buf = new byte[8192];
-                    int n;
-                    while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
-                }
-            }
-            Toast.makeText(this, "Imported: " + name, Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Import failed", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String queryName(Uri uri) {
-        String name = "script_" + System.currentTimeMillis() + ".lua";
-        try (android.database.Cursor c = getContentResolver().query(uri, null, null, null, null)) {
-            if (c != null && c.moveToFirst()) {
-                int idx = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME);
-                if (idx >= 0) name = c.getString(idx);
-            }
-        }
-        return name;
-    }
-
-    private void runAll() {
-        ScriptEngine.ScriptAPI api = text ->
-                Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-
-        List<File> files = installer.list();
-        log.append("Found: " + files.size() + "\n");
-        for (File f : files) {
-            String res = ScriptEngine.run(f, api);
-            log.append(f.getName() + " → " + res + "\n");
-        }
     }
 }

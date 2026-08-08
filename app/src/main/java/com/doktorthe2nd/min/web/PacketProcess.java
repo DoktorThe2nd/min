@@ -1,21 +1,18 @@
 package com.doktorthe2nd.min.web;
 
+import com.doktorthe2nd.min.Consts;
+import com.doktorthe2nd.min.web.exceptions.PacketException;
+import com.doktorthe2nd.min.web.exceptions.SessionExpiredException;
 import com.github.luben.zstd.Zstd;
-
-import org.msgpack.core.MessageBufferPacker;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessageUnpacker;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 public class PacketProcess {
-    private static final int COMPRESSION_THRESHOLD = 32;
     private static final int ISOLATE_DECODE_THRESHOLD = 4096;
     private static final int HEADER_SIZE = 10;
 
@@ -56,14 +53,11 @@ public class PacketProcess {
                 text.contains("сессия не онлайн");
     }
 
-    public static byte[] packPacket(int opcode, Map<String, Object> payload) throws IOException {
-        return packPacket(opcode, payload, 0);
-    }
     public static byte[] packPacket(int opcode, Map<String, Object> payload, int seq) throws IOException {
         byte[] raw = MessagePackSerializer.serializeMap(payload);
         byte[] body;
         int flag;
-        if (raw.length < COMPRESSION_THRESHOLD) {
+        if (raw.length < Consts.compression_threshold) {
             body = raw;
             flag = 0;
         }
@@ -104,15 +98,18 @@ public class PacketProcess {
         if (HEADER_SIZE + payloadLength > packet.length) {
             throw new PacketException("Packet payload length "+payloadLength+" exceeds buffer");
         }
-        ByteBuffer slice = ByteBuffer.wrap(packet, HEADER_SIZE, payloadLength);
+
+        byte[] slice = new byte[payloadLength];
+        System.arraycopy(packet, HEADER_SIZE, slice, 0, payloadLength);
 
         Map<String, Object> payload;
-        if (true || compFlag == 0 && payloadLength < ISOLATE_DECODE_THRESHOLD) {
-            payload = deserializePayload(slice.array(), compFlag);
+        payload = deserializePayload(slice, compFlag);
+        /*if (compFlag == 0 && payloadLength < ISOLATE_DECODE_THRESHOLD) {
+            payload = deserializePayload(slice, compFlag);
         } else {
             //final owned = Uint8List.fromList(slice);
             //payload = await Isolate.run(() => _deserializePayload(owned, compFlag));
-        }
+        }*/
 
         return new Packet(api, cmd, seq, opcode, payload);
     }
@@ -120,7 +117,9 @@ public class PacketProcess {
     public static Map<String, Object> deserializePayload(byte[] payloadBytes, int compFlag) {
         byte[] bytes = new byte[payloadBytes.length];
         if (compFlag != 0) {
-            bytes = decompressPayload(bytes);
+            bytes = decompressPayload(payloadBytes);
+        } else {
+            System.arraycopy(payloadBytes, 0, bytes, 0, payloadBytes.length);
         }
         if (bytes.length == 0) return null;
         try {
@@ -138,7 +137,7 @@ public class PacketProcess {
                 src[2] == (byte)0x2F &&
                 src[3] == (byte)0xFD) {
             try {
-                byte[] dest = new byte[LZ4.MAX_COMPRESSED_SIZE];
+                byte[] dest = new byte[Consts.max_compressed_size];
                 Zstd.decompress(dest, src);
                 return dest;
             } catch (Exception e) {

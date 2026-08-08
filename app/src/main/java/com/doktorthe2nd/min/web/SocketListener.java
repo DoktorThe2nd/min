@@ -1,60 +1,47 @@
 package com.doktorthe2nd.min.web;
 
+import com.doktorthe2nd.min.Consts;
+import com.doktorthe2nd.min.web.exceptions.QueueIsFullException;
+import com.doktorthe2nd.min.web.exceptions.SocketException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SocketListener {
-    @FunctionalInterface
-    public interface OnData {
-        void accept(byte[] data);
-    }
-
-    @FunctionalInterface
-    public interface OnError {
-        void accept(Throwable error);
-    }
-
-    @FunctionalInterface
-    public interface OnDone {
-        void run();
-    }
-
     private final Socket socket;
-    private final OnData onData;
-    private final OnError onError;
-    private final OnDone onDone;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private Thread readerThread;
 
-    public SocketListener(Socket socket, OnData onData, OnError onError, OnDone onDone) {
+    public SocketListener(Socket socket) {
         this.socket = socket;
-        this.onData = onData;
-        this.onError = onError;
-        this.onDone = onDone;
     }
 
     public void start() {
         readerThread = new Thread(() -> {
             try (InputStream in = socket.getInputStream()) {
-                byte[] buffer = new byte[LZ4.MAX_COMPRESSED_SIZE];
+                System.out.println("SocketListener started");
+                byte[] buffer = new byte[Consts.max_compressed_size];
                 int bytesRead;
-                while (running.get()) {
-                    while ((bytesRead = in.read(buffer)) != -1) {
-                        // Извлекаем только реально прочитанные байты
-                        byte[] data = new byte[bytesRead];
-                        System.arraycopy(buffer, 0, data, 0, bytesRead);
-                        onData.accept(data);
-                    }
+                while (running.get() && (bytesRead = in.read(buffer)) != -1) {
+                    byte[] data = new byte[bytesRead];
+                    System.arraycopy(buffer, 0, data, 0, bytesRead);
+                    Packet packet = PacketProcess.unpackPacket(data);
+                    System.out.println(packet);
+                    Connection.getFromMap(packet.seq).apply(packet);
                 }
             } catch (IOException e) {
                 if (running.get()) {
-                    onError.accept(e);
+                    throw new RuntimeException("IOException in SocketListener: "+e.getMessage());
                 }
             } finally {
                 running.set(false);
-                onDone.run();
+                System.out.println("SocketListener stopped");
             }
         });
         readerThread.setDaemon(true);
@@ -64,7 +51,7 @@ public class SocketListener {
     public void stop() {
         running.set(false);
         if (readerThread != null) {
-            readerThread.interrupt(); // на случай, если поток заблокирован на чтении
+            readerThread.interrupt();
         }
     }
 

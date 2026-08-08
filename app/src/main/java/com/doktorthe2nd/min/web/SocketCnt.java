@@ -1,8 +1,8 @@
 package com.doktorthe2nd.min.web;
 
+import com.doktorthe2nd.min.web.exceptions.SocketException;
+
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.Map;
 
 import javax.net.ssl.SSLSocket;
@@ -44,7 +44,7 @@ public class SocketCnt {
 
     public static void startListener() {
         stopListener();
-        SOCKET_LISTENER = new SocketListener(SOCKET, SocketCnt::listenData, SocketCnt::listenError, SocketCnt::listenDone);
+        SOCKET_LISTENER = new SocketListener(SOCKET);
         SOCKET_LISTENER.start();
     }
 
@@ -56,7 +56,7 @@ public class SocketCnt {
         return SOCKET != null && SOCKET.isConnected();
     }
 
-    private static int c_seq = 0;
+    private static int c_seq = -1;
     private static int nextSeq() {
         c_seq = (c_seq + 1) % 65536;
         return c_seq;
@@ -84,19 +84,5 @@ public class SocketCnt {
             throw new SocketException("Send packet IOException: "+e.getMessage());
         }
         return seq;
-    }
-
-    public static void listenData(byte[] data) {
-        System.out.println(PacketProcess.unpackPacket(data));
-    }
-
-    public static void listenError(Throwable throwable) {
-        System.out.println("SocketListener throws: "+throwable.getMessage());
-        System.out.println("Init restart");
-        startListener();
-    }
-
-    public static void listenDone() {
-        System.out.println("SocketListener done");
     }
 }

@@ -1,4 +1,4 @@
-package com.doktorthe2nd.min.web.exceptions;
+package com.doktorthe2nd.min.net.exceptions;
 
 public class QueueIsFullException extends RuntimeException {
     public QueueIsFullException(String queue, int max_size) {

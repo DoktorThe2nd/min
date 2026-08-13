@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_min"
+        android:layout_width="match_parent"
+        android:layout_height="115sp"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textSize="96sp" />
+
+    <TextView
+        android:id="@+id/text_sub_min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/auth_subtext"
+        android:textAlignment="center" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="153dp" />
+
+    <TextView
+        android:id="@+id/text_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/auth_enter_phone"
+        android:textAlignment="center"
+        android:visibility="visible" />
+
+    <EditText
+        android:id="@+id/edit_phone"
+        android:layout_width="253dp"
+        android:layout_height="53dp"
+        android:ems="10"
+        android:hint="+7(xxx)xxx-xx-xx"
+        android:inputType="phone"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/button_phone"
+        android:layout_width="253dp"
+        android:layout_height="53dp"
+        android:text="@string/auth_request_code"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/text_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/auth_enter_code"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/edit_code"
+        android:layout_width="253dp"
+        android:layout_height="53dp"
+        android:ems="10"
+        android:hint="xxxxxx"
+        android:inputType="number"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_code"
+        android:layout_width="253dp"
+        android:layout_height="53dp"
+        android:text="@string/auth_send_code"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/auth_enter_password"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/edit_password"
+        android:layout_width="253dp"
+        android:layout_height="53dp"
+        android:ems="10"
+        android:hint="password"
+        android:inputType="text|textPassword|textNoSuggestions"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/button_password"
+        android:layout_width="253dp"
+        android:layout_height="53dp"
+        android:text="@string/auth_send_password"
+        android:visibility="gone" />
+
+</LinearLayout>

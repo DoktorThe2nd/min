@@ -1,6 +1,6 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
-import com.doktorthe2nd.min.web.exceptions.SocketException;
+import com.doktorthe2nd.min.net.exceptions.SocketException;
 
 import java.io.IOException;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
 import org.msgpack.core.MessageBufferPacker;
 import org.msgpack.core.MessageFormat;

@@ -1,16 +1,10 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
 import com.doktorthe2nd.min.Consts;
-import com.doktorthe2nd.min.web.exceptions.QueueIsFullException;
-import com.doktorthe2nd.min.web.exceptions.SocketException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SocketListener {

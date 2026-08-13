@@ -1,8 +1,8 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
 import com.doktorthe2nd.min.Consts;
-import com.doktorthe2nd.min.web.exceptions.PacketException;
-import com.doktorthe2nd.min.web.exceptions.SessionExpiredException;
+import com.doktorthe2nd.min.net.exceptions.PacketException;
+import com.doktorthe2nd.min.net.exceptions.SessionExpiredException;
 import com.github.luben.zstd.Zstd;
 
 import java.io.IOException;

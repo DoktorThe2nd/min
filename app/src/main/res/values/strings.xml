@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">min</string>
+    <string name="auth_subtext">Custom MAX client\nUnder GNU license</string>
+    <string name="auth_request_code">Request code</string>
+    <string name="auth_send_code">Send code</string>
+    <string name="auth_send_password">Log in</string>
+    <string name="auth_enter_phone">Enter phone:</string>
+    <string name="auth_enter_code">Enter code from SMS:</string>
+    <string name="auth_enter_password">Your account has 2fa. Enter password:</string>
 </resources>

@@ -1,19 +1,13 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
 import com.doktorthe2nd.min.Consts;
 
-import net.jpountz.lz4.LZ4BlockInputStream;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class LZ4 {

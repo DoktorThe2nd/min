@@ -3,7 +3,7 @@ package com.doktorthe2nd.min.modules;
 import android.widget.Toast;
 
 import com.doktorthe2nd.min.MainActivity;
-import com.doktorthe2nd.min.web.Packet;
+import com.doktorthe2nd.min.net.Packet;
 
 public class MReporter {
     public static void toastError(String text, int dur) {

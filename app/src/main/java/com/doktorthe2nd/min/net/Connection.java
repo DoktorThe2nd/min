@@ -1,10 +1,10 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
 import android.util.Pair;
 
 import com.doktorthe2nd.min.Consts;
-import com.doktorthe2nd.min.web.exceptions.QueueIsFullException;
-import com.doktorthe2nd.min.web.exceptions.SocketException;
+import com.doktorthe2nd.min.net.exceptions.QueueIsFullException;
+import com.doktorthe2nd.min.net.exceptions.SocketException;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;

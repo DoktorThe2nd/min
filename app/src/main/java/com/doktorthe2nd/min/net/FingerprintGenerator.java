@@ -1,4 +1,4 @@
-package com.doktorthe2nd.min.web;
+package com.doktorthe2nd.min.net;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

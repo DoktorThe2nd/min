@@ -2,10 +2,10 @@ package com.doktorthe2nd.min;
 
 import android.util.Pair;
 
-import com.doktorthe2nd.min.web.ApkBuildFingerprint;
-import com.doktorthe2nd.min.web.FingerprintGenerator;
+import com.doktorthe2nd.min.modules.session.SessionData;
+import com.doktorthe2nd.min.net.ApkBuildFingerprint;
+import com.doktorthe2nd.min.net.FingerprintGenerator;
 
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -19,15 +19,20 @@ public class Consts {
     public static final int max_compressed_size = 32*1024*1024;
     public static final int compression_threshold = 512;
 
+    public static final String luaApiAssetsDir = "lua_modules";
+    public static final String luaBuiltInScripts = "lua_scripts";
+    public static final int luaMaxLength = 100000; // does not affect luaApiAssetsDir/*
+
     // fingerprint https://github.com/MaxApiTeam/PyMax/blob/main/src/pymax/_data/apk_fingerprints.json#L410
     public static final String appVersion = "26.18.4";
     public static final int buildNumber = 6724;
 
     // auto set
+    public static SessionData currentSession; // из MSession::run
     public static long callsSeed = 0; // из ответа на sessionInit
     public static final int clientSessionId = UUID.randomUUID().hashCode();
-    public static final String instanceId = UUID.randomUUID().toString();
-    public static final String deviceId = UUID.randomUUID().toString();
+    public static String instanceId = UUID.randomUUID().toString();
+    public static String deviceId = UUID.randomUUID().toString();
 
     public static Map<String, Object> getUserAgent() {
         Map<String, Object> userAgent = new HashMap<>();

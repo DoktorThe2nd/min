@@ -1,5 +1,10 @@
 <resources>
+    <!--> GENERAL <-->
     <string name="app_name">min</string>
+    <string name="loading">Loading…</string>
+    <string name="connecting">Connecting…</string>
+
+    <!--> AUTH SCREEN <-->
     <string name="auth_subtext">Custom MAX client\nUnder GNU license</string>
     <string name="auth_request_code">Request code</string>
     <string name="auth_send_code">Send code</string>

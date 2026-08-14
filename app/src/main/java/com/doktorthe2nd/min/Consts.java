@@ -24,8 +24,8 @@ public class Consts {
     public static final int luaMaxLength = 100000; // does not affect luaApiAssetsDir/*
 
     // fingerprint https://github.com/MaxApiTeam/PyMax/blob/main/src/pymax/_data/apk_fingerprints.json#L410
-    public static final String appVersion = "26.18.4";
-    public static final int buildNumber = 6724;
+    public static final String appVersion = "26.19.1";
+    public static final int buildNumber = 6729;
 
     // auto set
     public static SessionData currentSession; // из MSession::run
@@ -60,13 +60,13 @@ public class Consts {
         Map<String, ApkBuildFingerprint> data = new HashMap<>();
         ApkBuildFingerprint modelV1 = new ApkBuildFingerprint(
                 "1684414033eb263e2c615f8b7df5ed8793850a07656304997fbf07e9e21e1e93",// certificateMetaSha256
-                "bf5c685810d20e9dde60d142169329f1fafbdc0d4b64de853bf1b45f4e36250c",// dexMetaSha256
+                "0fefb0ece6b4d59f0b7a25ccbc403dfa1492e73b13b3f94d80f585a2d21f7de4",// dexMetaSha256
                 new HashMap<>() {{
-                    put("arm64-v8a", "c77b89270f44bd26c218a946c18911f2b156312693ea00b419d169b71c1ed111"); // soMetaSha256 для arm64
+                    put("arm64-v8a", "88ba23d1352a2c4c0ec92d6e96c41b3494e7346a1409c97158e494256d0ebbdb"); // soMetaSha256 для arm64
                     //put("armeabi-v7a", "deadbeef9999..."); // soMetaSha256 для arm32
                 }}
         );
-        data.put("26.18.4", modelV1);
+        data.put(Consts.appVersion, modelV1);
         return new FingerprintGenerator(data);
     }
 }

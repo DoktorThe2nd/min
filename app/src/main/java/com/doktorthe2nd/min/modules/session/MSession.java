@@ -10,6 +10,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MSession {
+    public static void loadFromSave() {
+        Consts.currentSession = SessionData.loadSession();
+        Consts.deviceId = Consts.currentSession.deviceId;
+        Consts.instanceId = Consts.currentSession.mt_instanceid;
+    }
+
     public static void init(Runnable onAnswer) {
         Map<String, Object> payload = new HashMap<>(){{
             put("mt_instanceid", Consts.instanceId);

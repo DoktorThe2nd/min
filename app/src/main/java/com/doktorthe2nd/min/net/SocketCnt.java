@@ -73,9 +73,9 @@ public class SocketCnt {
      * @throws SocketException if not connected
      */
     public static int send(int opcode, Map<String, Object> payload) throws SocketException {
-        System.out.println("Sending packet opcode="+opcode+" payload="+payload.toString());
         if (!isConnected()) throw new SocketException("Not connected");
         int seq = nextSeq();
+        System.out.println("Sending packet "+new Packet(10, 0, seq, opcode, payload));
         byte[] data;
         try {
             data = PacketProcess.packPacket(opcode, payload, seq);

@@ -37,6 +37,8 @@ public class MessagePackSerializer {
             packer.packString((String) value);
         } else if (value instanceof Integer) {
             packer.packInt((Integer) value);
+        } else if (value instanceof Short) {
+            packer.packInt((Short) value);
         } else if (value instanceof Long) {
             packer.packLong((Long) value);
         } else if (value instanceof Boolean) {
@@ -63,7 +65,7 @@ public class MessagePackSerializer {
         } else {
             // Если тип не предусмотрен – можно упаковать как строку (toString) или выбросить исключение
             // Рекомендуем выбросить исключение, чтобы не потерять данные
-            throw new IllegalArgumentException("Unsupported type: " + value.getClass().getName());
+            throw new RuntimeException("Unsupported type: " + value.getClass().getName());
         }
     }
 
